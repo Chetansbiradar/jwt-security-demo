@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,8 +21,11 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
+	@Autowired
 	private JwtAuthenticationFilter jwtAuthFilter;
+	@Autowired
 	private AuthenticationProvider authenticationProvider;
+	@Autowired
 	private LogoutHandler logoutHandler;
 
 	@Bean
@@ -40,7 +44,6 @@ public class SecurityConfiguration {
 			.and()
 			.authenticationProvider(authenticationProvider)
 			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-			
 			.logout()
 	        .logoutUrl("/api/business/auth/logout")
 	        .addLogoutHandler(logoutHandler)

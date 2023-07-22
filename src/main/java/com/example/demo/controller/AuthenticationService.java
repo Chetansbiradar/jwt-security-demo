@@ -39,6 +39,7 @@ public class AuthenticationService {
 	public AuthenticationResponse register(RegisterRequest request) {
 		// TODO Auto-generated method stub
 		var user=Business.builder()
+				.id(request.getId())
 				.username(request.getUsername())
 				.password(request.getPassword())
 				.businessName(request.getBusinessName())
@@ -55,7 +56,7 @@ public class AuthenticationService {
 				.role(request.getRole())
 				.build();
 				
-		var savedUser = repository.save(user);
+		var savedUser = repository.saveAndFlush(user);
 	    var jwtToken = jwtService.generateToken(user);
 	    var refreshToken = jwtService.generateRefreshToken(user);
 				
@@ -70,9 +71,9 @@ public class AuthenticationService {
 		// TODO Auto-generated method stub
 		authenticationManager
 				.authenticate(
-						new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+						new UsernamePasswordAuthenticationToken(request.getId(), request.getPassword())
 				);
-		var user =repository.findByUsername(request.getUsername()).orElseThrow();
+		var user =repository.findById(request.getId()).orElseThrow();
 		var jwtToken=jwtService.generateToken(user);
 		
 		
@@ -98,7 +99,7 @@ public class AuthenticationService {
 	 
 	 private void revokeAllUserTokens(Business user)
 	 {
-		    var validUserTokens = tokenRepository.findAllValidTokenByBusiness(user.getUsername());
+		    var validUserTokens = tokenRepository.findAllValidTokenByBusiness(user.getId());
 		    if (validUserTokens.isEmpty())
 		      return;
 		    validUserTokens.forEach(token -> {
@@ -114,15 +115,15 @@ public class AuthenticationService {
 	  ) throws IOException {
 	    final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 	    final String refreshToken;
-	    final String userName;
+	    final String id;
 	    if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
 	      return;
 	    }
 	    refreshToken = authHeader.substring(7);
-	    userName = jwtService.extractUsername(refreshToken);
-	    if (userName != null) {
-	      var user = this.repository.findByUsername(userName)
-	              .orElseThrow();
+	    id = jwtService.extractId(refreshToken);
+	    if (id != null) {
+	      var user = this.repository.findById(id)
+              .orElseThrow();
 	      if (jwtService.isTokenValid(refreshToken, user)) {
 	        var accessToken = jwtService.generateToken(user);
 	        revokeAllUserTokens(user);

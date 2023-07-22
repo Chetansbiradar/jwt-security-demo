@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		jwtToken=authHeader.substring(7);
 		
 		//to extract the username we need a class which can extract it from jwtToken
-		userName=jwtService.extractUsername(jwtToken);
+		userName=jwtService.extractId(jwtToken);
 		
 		//if userName is  not null and he has not been authenticated earlier then do this
 		if(userName!=null && SecurityContextHolder.getContext().getAuthentication()==null)

@@ -3,18 +3,13 @@ package com.example.demo.entity;
 import java.util.Collection;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.demo.token.Token;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -31,10 +26,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 public class Business implements UserDetails {
-	
+
 	@Id
-	private String username;
+	@GeneratedValue
+	private int id;
 	@Column(unique = true)
+	@NotNull
+	private String username;
+	@Column
 	@NotNull
 	private String password;
 	@Column
@@ -43,10 +42,8 @@ public class Business implements UserDetails {
 	@Column
 	@NotNull
 	private String ownerName;
-	@Column(unique = true, length = 10)
+	@Column(unique = true)
 	@NotNull
-	@Min(10)
-	@Max(10)
 	private int businessContactNumber;
 	@Column
 	@NotNull
@@ -57,23 +54,15 @@ public class Business implements UserDetails {
 	@Column
 	@NotNull
 	private String category;
-	@Column(unique = true, length = 12)
+	@Column(unique = true)
 	@NotNull
-	@Min(12)
-	@Max(12)
-    @Pattern(regexp = "\\d{12}", message = "Aadhar number must be exactly 12 digits.")
+//    @Pattern(regexp = "\\d{12}", message = "Aadhar number must be exactly 12 digits.")
     private String aadharNumber;
-	@Column(nullable = false, length = 16)
-	@Min(11)
-	@Max(16)
+	@Column(nullable = false)
 	private int bankAccoutNo;
-	@Column(unique=true, nullable = false, length=10)
-	@Min(10)
-	@Max(10)
+	@Column(unique=true, nullable = false)
 	private String panCardNo;
-	@Column(unique=true, nullable = false, length=14)
-	@Min(14)
-	@Max(14)
+	@Column(unique=true, nullable = false)
 	private String fssaiNumber;
 	
 	@Column

@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.crypto.SecretKey;
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +18,8 @@ import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 
 @Service
+@PropertySource("classpath:application.properties")
 public class JwtService {
-
-	
 	
 	@Value("${application.security.jwt.secret-key}")
 	private String secretKey;
@@ -32,7 +30,7 @@ public class JwtService {
 	
 	//private static final String SECRET_KEY = "VhnOxhjINTa7e4C5BFjS60MjmILfMi50";
 	
-	public String extractUsername(String jwtToken)
+	public String extractId(String jwtToken)
 	{
 		return extractClaim(jwtToken, Claims::getSubject);
 	}
@@ -47,8 +45,8 @@ public class JwtService {
 	//to validate token
 	public boolean isTokenValid(String token, UserDetails userDetails)
 	{
-		final String username = extractUsername(token);
-		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+		final String id = ""+extractId(token);
+		return (id.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
 	
 	public boolean isTokenExpired(String token)
@@ -132,5 +130,5 @@ public class JwtService {
 		byte[] keyBytes=Decoders.BASE64.decode(secretKey);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
-	
+
 }

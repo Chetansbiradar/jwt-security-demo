@@ -7,9 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface TokenRepository extends JpaRepository<Token, Integer> {
-
-	@Query(value = "select t from Token t inner join Business u on t.user.id = u.id where u.id = :id and (t.expired = false or t.revoked = false) ")
-   List<Token> findAllValidTokenByBusiness(String username);
-
+	@Query(value = "select t from Token t inner join Business b on t.user.id = b.id where b.id = :id and (t.expired = false or t.revoked = false)")
+	   List<Token> findAllValidTokenByBusiness(int id);
 		  Optional<Token> findByToken(String token);
 }
